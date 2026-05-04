@@ -38,7 +38,6 @@ public class Simulador {
 
         while (!eventsQueue.isEmpty() && !rndGenerator.atingiuLimite()) {
             Evento evento = eventsQueue.poll();
-            // System.out.println(evento);
             tempoFinal = evento.getTempo();
             processarEvento(evento);
         }
@@ -70,9 +69,6 @@ public class Simulador {
         }
     }
 
-    // TODO: Fila de espera não enche
-    // Provavelment por conta do Cliente emAtendimento = fila.removerCliente();
-
     private void procesarChegada(Evento evento) {
         Cliente cliente = evento.getCliente();
         String nomeFila = evento.getFilaSaida();
@@ -82,9 +78,11 @@ public class Simulador {
 
         if (fila.temLugarDisponivel()) {
             fila.adicionarCliente(cliente);
-            System.out.println(
-                    "Arriving " + cliente + " on queue: " + fila.getNome() + " with : "
-                            + fila.getQuantidadeClientesNoSistema() + " in queue");
+
+            // System.out.println(
+            // "Arriving " + cliente + " on queue: " + nomeFila + " with : "
+            // + fila.getQuantidadeClientesNoSistema() + " in queue");
+
             // Se servidor disponível, iniciar atendimento
             if (fila.temServidorDisponivel()) {
                 Cliente emAtendimento = fila.removerCliente();
@@ -95,7 +93,6 @@ public class Simulador {
                 eventsQueue.add(eventoSaida);
             }
         } else {
-            System.out.println("Losing client: " + cliente + " of queue " + fila.getNome());
             fila.perderCliente();
         }
 
@@ -103,7 +100,7 @@ public class Simulador {
         if (!rndGenerator.atingiuLimite()) {
             if (nomeFila.equals("Q1") && evento.getTempo() == cliente.getTempoChegada()) {
                 double tempoProxChegada = tempoFinal + rndGenerator.uniforme(minArrivalQ1, maxArrivalQ1);
-                System.out.println("Next client in: " + tempoProxChegada);
+                // System.out.println("Next client in: " + tempoProxChegada);
                 Cliente proximoCliente = new Cliente(proximoIdCliente++, tempoProxChegada);
                 Evento eventoProx = new Evento(Evento.CHEGADA, tempoProxChegada, proximoCliente, "Q1");
                 eventsQueue.add(eventoProx);
@@ -120,8 +117,7 @@ public class Simulador {
         fila.registrarMudancaEstado(tempoFinal);
         cliente.setTempoSaida(tempoFinal);
         fila.terminarAtendimento(tempoFinal - cliente.getTempoChegada());
-
-        System.out.println("Left " + cliente + " of queue: " + fila.getNome());
+        // System.out.println("Left " + cliente + " of queue: " + fila.getNome());
 
         // Verificar se há cliente esperando
         if (fila.temClienteEsperando() && fila.temServidorDisponivel() && !rndGenerator.atingiuLimite()) {
@@ -138,13 +134,11 @@ public class Simulador {
             String filaDestino = rndGenerator.selecionarRota(rotas.get(nomeFila));
 
             if (filaDestino != null) {
-                System.out.println(cliente + " going to: " + filaDestino);
+                // System.out.println(cliente + " going to: " + filaDestino);
                 // Cliente vai para outra fila
                 Evento eventoRot = new Evento(Evento.ROTEAMENTO, tempoFinal, cliente, nomeFila);
                 eventoRot.setFilaDestino(filaDestino);
                 eventsQueue.add(eventoRot);
-            } else {
-                System.out.println("LEFT THE SYSTEM " + cliente + " of Queue: " + fila.getNome());
             }
             // Se filaDestino == null, cliente sai do sistema (não faz nada)
         }
@@ -199,7 +193,6 @@ public class Simulador {
                 }
 
                 if (linha.equals("arrivals:")) {
-                    System.out.println("Indo para arrivals");
                     linha = reader.readLine();
                     arrival = Double.parseDouble(linha.replace("Q1:", "").trim());
                 }
@@ -223,7 +216,6 @@ public class Simulador {
                     continue;
                 }
                 if (linha.equals("seeds:")) {
-                    System.out.println("Indo para seeds");
                     secaoAtual = "seeds";
                     continue;
                 }

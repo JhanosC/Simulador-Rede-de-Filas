@@ -148,7 +148,14 @@ public class Fila {
     }
 
     public void imprimirDistribuicaoEstados() {
-        System.out.println("\nFila " + nome + ": Distribuição de Probabilidades de Estados");
+        System.out.print(
+                "\nFila " + nome
+                        + " G/G/" + numServidores);
+        if (capacity > -1) {
+            System.out.print("/" + capacity);
+        }
+        System.out.println(": Distribuição de Probabilidades");
+
         double tempoTotal = 0;
         for (double tempo : tempoEmEstado.values()) {
             tempoTotal += tempo;
@@ -157,7 +164,7 @@ public class Fila {
         for (int estado : new java.util.TreeMap<>(tempoEmEstado).keySet()) {
             double tempo = tempoEmEstado.get(estado);
             double prob = tempoTotal > 0 ? tempo / tempoTotal : 0;
-            System.out.printf("  Estado %d (clientes): %.4f (tempo: %.2f)%n", estado, prob, tempo);
+            System.out.printf("  %d cliente(s): %.4f (tempo: %.2f)%n", estado, prob, tempo);
         }
     }
 
